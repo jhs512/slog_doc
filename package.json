@@ -6,6 +6,10 @@
   "main": "syncAll.js",
   "scripts": {
     "sync": "node syncAll.js",
-    "watch": "node watchAndUpload.js"
+    "watch": "node watchAndUpload.js",
+    "temp": "node makeEmptyDoc.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   }
 }
