@@ -1,6 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const { spawn } = require("child_process");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import updateDoc from "./updateDoc.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // doc 디렉토리 경로
 const docDir = path.join(__dirname, "doc");
@@ -8,7 +12,7 @@ const docDir = path.join(__dirname, "doc");
 // 전역 타임아웃 변수 선언
 let timeoutId = null;
 
-// 파일 변경 감지 및 updateDoc.js 실행 함수
+// 파일 변경 감지 및 updateDoc 실행 함수
 function runUpdateDoc(filename) {
   console.log(`파일 변경 감지: ${filename}`);
 
@@ -17,22 +21,14 @@ function runUpdateDoc(filename) {
     return;
   }
 
-  const updateScript = spawn("node", ["updateDoc.js", filename], {
-    stdio: "inherit",
-    shell: true,
-  });
-
-  updateScript.on("error", (error) => {
-    console.error("스크립트 실행 중 오류 발생:", error);
-  });
-
-  updateScript.on("exit", (code) => {
-    if (code === 0) {
-      console.log("updateDoc.js 실행 완료");
-    } else {
-      console.error(`updateDoc.js 실행 실패 (종료 코드: ${code})`);
-    }
-  });
+  // updateDoc 직접 호출
+  updateDoc(filename)
+    .then(() => {
+      console.log("updateDoc 실행 완료");
+    })
+    .catch((error) => {
+      console.error("updateDoc 실행 중 오류 발생:", error);
+    });
 }
 
 // 디렉토리 감시 시작

@@ -1,6 +1,11 @@
 {
-  "name": "slog-doc",
-  "dependencies": {
-    "node-fetch": "^3.3.2"
+  "type": "module",
+  "name": "slog_doc",
+  "version": "1.0.0",
+  "description": "Slog document synchronization tool",
+  "main": "syncAll.js",
+  "scripts": {
+    "sync": "node syncAll.js",
+    "watch": "node watchAndUpload.js"
   }
 }
