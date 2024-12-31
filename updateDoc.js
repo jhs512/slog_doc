@@ -63,10 +63,22 @@ async function updateDoc(filename) {
     }
 
     // 파일 내용 읽기
-    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const fileContent = fs.readFileSync(filePath, "utf-8").trim();
+
+    // 파일이 비어있는지 확인
+    if (fileContent.length === 0) {
+      console.log(`${filename} 파일이 비어있어 업데이트를 건너뜁니다.`);
+      return;
+    }
 
     // 내용 파싱
-    const { title, published, content } = parseContent(fileContent.trim());
+    const { title, published, content } = parseContent(fileContent);
+
+    // content가 비어있는지 확인
+    if (content.length === 0) {
+      console.log(`${filename} 파일이 비어있어 업데이트를 건너뜁니다.`);
+      return;
+    }
 
     // 백업 생성
     await createBackup(filename, fileContent, __dirname);
