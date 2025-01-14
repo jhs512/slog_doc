@@ -39,7 +39,7 @@ title: ${data.title || "제목 없음"}
 published: ${data.published || false}
 $$
 
-${data.content}`;
+${data.content.trim()}`;
 
     // 내용이 같으면 건너뛰기
     if (currentContent === newContent) {
