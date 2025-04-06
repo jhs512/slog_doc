@@ -21,9 +21,9 @@ async function syncFile(filename) {
     const currentContent = fs.readFileSync(filePath, "utf-8");
 
     // API에서 최신 내용 가져오기
-    const response = await fetch(`https://api.www.slog.gg/api/v1/posts/${id}`, {
+    const response = await fetch(`https://api.slog.gg/api/v1/posts/${id}`, {
       headers: {
-        Cookie: `accessToken=EMPTY; refreshToken=${refreshKey}`,
+        Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
       },
     });
 
@@ -36,6 +36,7 @@ async function syncFile(filename) {
     // config 형식으로 내용 변환
     const newContent = `$$config
 title: ${data.title || "제목 없음"}
+listed: ${data.listed || false}
 published: ${data.published || false}
 $$
 

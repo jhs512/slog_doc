@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import fetch from "node-fetch";
 import { fileURLToPath } from "url";
-import { createBackup } from "./backup.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,10 +13,10 @@ const refreshKey = fs
 
 async function makeEmptyDoc() {
   // API에서 최신 내용 가져오기
-  const response = await fetch(`https://api.www.slog.gg/api/v1/posts/temp`, {
+  const response = await fetch(`https://api.slog.gg/api/v1/posts/temp`, {
     method: "POST",
     headers: {
-      Cookie: `accessToken=EMPTY; refreshToken=${refreshKey}`,
+      Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
     },
   });
 
@@ -27,10 +26,11 @@ async function makeEmptyDoc() {
 
   const fileContent = `$$config
 title: ${rsData.data.title}
+listed: ${rsData.data.listed}
 published: ${rsData.data.published}
 $$
 
-생성된 파일입니다.
+${rsData.data.content}
 `;
 
   // 파일이 이미 있으면 패스

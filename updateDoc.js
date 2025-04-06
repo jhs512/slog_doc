@@ -17,10 +17,13 @@ function parseContent(content) {
   if (content.startsWith("$$config")) {
     const configEndIndex = content.indexOf("$$", 2);
     if (configEndIndex === -1) {
-      return { title: null, published: null, content };
+      return { title: null, listed: null, published: null, content };
     }
 
     const configSection = content.substring(8, configEndIndex);
+
+    console.log(configSection);
+
     const mainContent = content.substring(configEndIndex + 4);
 
     // config 파싱
@@ -28,17 +31,28 @@ function parseContent(content) {
     const config = {};
 
     configLines.forEach((line) => {
-      const [key, value] = line.split(": ").map((s) => s.trim());
+      const [key, value] = line
+        .trim()
+        .split(": ")
+        .map((s) => s.trim());
+
       if (key === "published") {
+        config[key] = value === "true";
+      } else if (key === "listed") {
         config[key] = value === "true";
       } else {
         config[key] = value;
       }
     });
 
+    if (typeof config["listed"] === "undefined") {
+      config["listed"] = config["published"];
+    }
+
     return {
       title: config.title || null,
       published: config.published ?? null,
+      listed: config.listed ?? null,
       content: mainContent,
     };
   }
@@ -47,6 +61,7 @@ function parseContent(content) {
   return {
     title: null,
     published: null,
+    listed: null,
     content,
   };
 }
@@ -72,7 +87,7 @@ async function updateDoc(filename) {
     }
 
     // 내용 파싱
-    const { title, published, content } = parseContent(fileContent);
+    const { title, listed, published, content } = parseContent(fileContent);
 
     // content가 비어있는지 확인
     if (content.length === 0) {
@@ -84,22 +99,25 @@ async function updateDoc(filename) {
     await createBackup(filename, fileContent, __dirname);
 
     // API 호출
-    const response = await fetch(`https://api.www.slog.gg/api/v1/posts/${id}`, {
+    const response = await fetch(`https://api.slog.gg/api/v1/posts/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        Cookie: `accessToken=EMPTY; refreshToken=${refreshKey}`,
+        Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
       },
       body: JSON.stringify({
         title,
         content,
         published,
+        listed,
       }),
     });
 
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(`API 오류: ${data.resultCode}, ${data.msg}`);
+      throw new Error(
+        `API 오류: ${data.resultCode}, ${data.msg}, ${JSON.stringify(data)}`
+      );
     }
 
     console.log(`${filename} 업데이트 완료`);
