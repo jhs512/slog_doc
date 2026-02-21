@@ -13,7 +13,7 @@ const refreshKey = fs
 
 async function makeEmptyDoc() {
   // API에서 최신 내용 가져오기
-  const response = await fetch(`https://api.slog.gg/api/v1/posts/temp`, {
+  const response = await fetch(`https://api.slog.gg/post/api/v1/posts/temp`, {
     method: "POST",
     headers: {
       Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,

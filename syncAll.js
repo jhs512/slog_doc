@@ -21,11 +21,14 @@ async function syncFile(filename) {
     const currentContent = fs.readFileSync(filePath, "utf-8");
 
     // API에서 최신 내용 가져오기
-    const response = await fetch(`https://api.slog.gg/api/v1/posts/${id}`, {
-      headers: {
-        Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
+    const response = await fetch(
+      `https://api.slog.gg/post/api/v1/posts/${id}`,
+      {
+        headers: {
+          Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`API 오류: ${response.status} ${response.statusText}`);
@@ -75,7 +78,7 @@ async function syncAll() {
     }
 
     console.log(
-      `동기화 완료: 총 ${mdFiles.length}개 중 ${updatedCount}개 파일이 업데이트됨`
+      `동기화 완료: 총 ${mdFiles.length}개 중 ${updatedCount}개 파일이 업데이트됨`,
     );
   } catch (error) {
     console.error("동기화 중 오류 발생:", error);

@@ -99,24 +99,27 @@ async function updateDoc(filename) {
     await createBackup(filename, fileContent, __dirname);
 
     // API 호출
-    const response = await fetch(`https://api.slog.gg/api/v1/posts/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
+    const response = await fetch(
+      `https://api.slog.gg/post/api/v1/posts/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Cookie: `accessToken=EMPTY; apiKey=${refreshKey}`,
+        },
+        body: JSON.stringify({
+          title,
+          content,
+          published,
+          listed,
+        }),
       },
-      body: JSON.stringify({
-        title,
-        content,
-        published,
-        listed,
-      }),
-    });
+    );
 
     if (!response.ok) {
       const data = await response.json();
       throw new Error(
-        `API 오류: ${data.resultCode}, ${data.msg}, ${JSON.stringify(data)}`
+        `API 오류: ${data.resultCode}, ${data.msg}, ${JSON.stringify(data)}`,
       );
     }
 
